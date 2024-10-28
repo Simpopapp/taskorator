@@ -68,21 +68,20 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
   }
-
-  /* Transições suaves */
-  .transition-all {
-    @apply transition-all duration-200 ease-in-out;
-  }
 }
 
 /* Classes de utilidade personalizadas */
 @layer components {
+  .smooth-transition {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
   .card-hover {
-    @apply hover:shadow-lg hover:scale-[1.02] transition-all;
+    @apply hover:shadow-lg hover:scale-[1.02] smooth-transition;
   }
 
   .button-hover {
-    @apply hover:scale-[1.02] active:scale-[0.98] transition-all;
+    @apply hover:scale-[1.02] active:scale-[0.98] smooth-transition;
   }
 
   .icon-3d {
