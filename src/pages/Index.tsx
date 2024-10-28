@@ -5,9 +5,9 @@ import TaskCard from "@/components/TaskCard";
 import EmployeeCard from "@/components/EmployeeCard";
 import AudioRecorder from "@/components/AudioRecorder";
 import FileUpload from "@/components/FileUpload";
-import { Users, ListTodo, Upload } from "lucide-react";
+import StatsCard from "@/components/StatsCard";
+import { Users, ListTodo, Upload, TrendingUp, Activity, CheckCircle } from "lucide-react";
 
-// Mock data
 const tasks = [
   {
     title: "Desenvolver nova feature",
@@ -44,75 +44,86 @@ const employees = [
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 mt-2">Gerencie suas tarefas e equipe</p>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <header className="text-center md:text-left animate-fade-in">
+          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
+          <p className="text-gray-500 mt-2">Gerencie suas tarefas e equipe de forma inteligente</p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ListTodo className="w-5 h-5" />
-                Tarefas Ativas
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <span className="text-3xl font-bold">12</span>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                Funcionários
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <span className="text-3xl font-bold">8</span>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Upload className="w-5 h-5" />
-                Arquivos Processados
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <span className="text-3xl font-bold">45</span>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatsCard
+            title="Tarefas Ativas"
+            value="12"
+            icon={<ListTodo className="h-4 w-4 text-primary" />}
+            trend={{ value: 12, isPositive: true }}
+          />
+          <StatsCard
+            title="Funcionários"
+            value="8"
+            icon={<Users className="h-4 w-4 text-primary" />}
+          />
+          <StatsCard
+            title="Arquivos Processados"
+            value="45"
+            icon={<Upload className="h-4 w-4 text-primary" />}
+            trend={{ value: 23, isPositive: true }}
+          />
+          <StatsCard
+            title="Taxa de Conclusão"
+            value="89%"
+            icon={<Activity className="h-4 w-4 text-primary" />}
+            trend={{ value: 7, isPositive: true }}
+          />
         </div>
 
         <Tabs defaultValue="tasks" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="tasks">Tarefas</TabsTrigger>
-            <TabsTrigger value="team">Equipe</TabsTrigger>
-            <TabsTrigger value="upload">Upload</TabsTrigger>
+          <TabsList className="w-full justify-start space-x-2 rounded-lg bg-muted p-1">
+            <TabsTrigger value="tasks" className="data-[state=active]:bg-white">
+              <ListTodo className="h-4 w-4 mr-2" />
+              Tarefas
+            </TabsTrigger>
+            <TabsTrigger value="team" className="data-[state=active]:bg-white">
+              <Users className="h-4 w-4 mr-2" />
+              Equipe
+            </TabsTrigger>
+            <TabsTrigger value="upload" className="data-[state=active]:bg-white">
+              <Upload className="h-4 w-4 mr-2" />
+              Upload
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="tasks" className="space-y-4">
-            {tasks.map((task, index) => (
-              <TaskCard key={index} {...task} />
-            ))}
+            <div className="grid gap-4">
+              {tasks.map((task, index) => (
+                <div key={index} className="animate-fade-in" style={{ animationDelay: `${index * 150}ms` }}>
+                  <TaskCard {...task} />
+                </div>
+              ))}
+            </div>
           </TabsContent>
 
-          <TabsContent value="team" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <TabsContent value="team" className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {employees.map((employee, index) => (
-              <EmployeeCard key={index} {...employee} />
+              <div key={index} className="animate-fade-in" style={{ animationDelay: `${index * 150}ms` }}>
+                <EmployeeCard {...employee} />
+              </div>
             ))}
           </TabsContent>
 
           <TabsContent value="upload" className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Gravação de Áudio</h3>
+            <div className="space-y-4 animate-fade-in">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Activity className="h-4 w-4 text-primary" />
+                Gravação de Áudio
+              </h3>
               <AudioRecorder />
             </div>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Upload de Arquivo</h3>
+            <div className="space-y-4 animate-fade-in" style={{ animationDelay: "150ms" }}>
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Upload className="h-4 w-4 text-primary" />
+                Upload de Arquivo
+              </h3>
               <FileUpload />
             </div>
           </TabsContent>
