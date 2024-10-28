@@ -1,31 +1,40 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mic, Square, Upload } from "lucide-react";
+import { Mic, Square, Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
 
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const recorder = new MediaRecorder(stream);
       const audioChunks: BlobPart[] = [];
 
-      mediaRecorder.ondataavailable = (event) => {
+      recorder.ondataavailable = (event) => {
         audioChunks.push(event.data);
       };
 
-      mediaRecorder.onstop = () => {
+      recorder.onstop = async () => {
         const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
         setAudioBlob(audioBlob);
+        await processAudioWithAI(audioBlob);
       };
 
-      mediaRecorder.start();
+      recorder.start();
+      setMediaRecorder(recorder);
       setIsRecording(true);
+      
+      toast({
+        title: "Gravação iniciada",
+        description: "Fale as informações da tarefa claramente",
+      });
     } catch (error) {
       toast({
         title: "Erro",
@@ -36,17 +45,41 @@ const AudioRecorder = () => {
   };
 
   const stopRecording = () => {
-    setIsRecording(false);
-    // Implementation for stopping recording
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+      mediaRecorder.stream.getTracks().forEach(track => track.stop());
+    }
   };
 
-  const handleUpload = () => {
-    if (audioBlob) {
-      // Implementation for uploading audio
-      toast({
-        title: "Sucesso",
-        description: "Áudio enviado para processamento",
+  const processAudioWithAI = async (audioBlob: Blob) => {
+    setIsProcessing(true);
+    try {
+      // Simulated API call - replace with actual OpenAI Whisper API integration
+      const formData = new FormData();
+      formData.append("audio", audioBlob);
+
+      const response = await fetch("/api/process-audio", {
+        method: "POST",
+        body: formData,
       });
+
+      if (!response.ok) throw new Error("Falha no processamento do áudio");
+
+      const data = await response.json();
+      
+      toast({
+        title: "Áudio processado com sucesso",
+        description: "Nova tarefa criada a partir do áudio",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro no processamento",
+        description: "Não foi possível processar o áudio",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -58,14 +91,24 @@ const AudioRecorder = () => {
             variant={isRecording ? "destructive" : "default"}
             size="lg"
             onClick={isRecording ? stopRecording : startRecording}
+            disabled={isProcessing}
           >
-            {isRecording ? <Square className="w-4 h-4 mr-2" /> : <Mic className="w-4 h-4 mr-2" />}
-            {isRecording ? "Parar" : "Gravar"}
+            {isRecording ? (
+              <>
+                <Square className="w-4 h-4 mr-2" />
+                Parar
+              </>
+            ) : (
+              <>
+                <Mic className="w-4 h-4 mr-2" />
+                Gravar
+              </>
+            )}
           </Button>
-          {audioBlob && (
-            <Button variant="outline" size="lg" onClick={handleUpload}>
-              <Upload className="w-4 h-4 mr-2" />
-              Enviar
+          {isProcessing && (
+            <Button variant="outline" size="lg" disabled>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Processando
             </Button>
           )}
         </div>
