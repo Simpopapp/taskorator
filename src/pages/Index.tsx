@@ -13,6 +13,26 @@ import { useTaskDialog } from "@/hooks/useTaskDialog";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 
+// Mock data for employees until we have the API
+const mockEmployees = [
+  {
+    name: "João Silva",
+    role: "Desenvolvedor Frontend",
+    status: "online" as const,
+    avatar: "/avatars/joao.jpg",
+    taskCount: 3,
+    email: "joao@example.com"
+  },
+  {
+    name: "Maria Santos",
+    role: "UX Designer",
+    status: "busy" as const,
+    avatar: "/avatars/maria.jpg",
+    taskCount: 2,
+    email: "maria@example.com"
+  },
+];
+
 const Index = () => {
   const { isOpen, task, closeDialog } = useTaskDialog();
   const { data: tasks = [] } = useQuery({
@@ -88,7 +108,7 @@ const Index = () => {
             <StatsCard
               title="Taxa de Conclusão"
               value="89%"
-              icon={<Activity className="h-4 w-4 text-primary" />}
+              icon={<ChartLine className="h-4 w-4 text-primary" />}
               trend={{ value: 7, isPositive: true }}
               className="glass-card"
             />
@@ -129,7 +149,7 @@ const Index = () => {
               initial="hidden"
               animate="show"
             >
-              {employees.map((employee, index) => (
+              {mockEmployees.map((employee, index) => (
                 <motion.div key={index} variants={item}>
                   <EmployeeCard {...employee} />
                 </motion.div>
@@ -141,7 +161,7 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-primary" />
+                  <ChartLine className="h-4 w-4 text-primary" />
                   Gravação de Áudio
                 </h3>
                 <AudioRecorder />
