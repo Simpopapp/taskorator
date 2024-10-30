@@ -44,8 +44,27 @@ export function useTaskMutations() {
     },
   });
 
+  const deleteTask = useMutation({
+    mutationFn: api.tasks.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      toast({
+        title: "Tarefa excluída",
+        description: "A tarefa foi excluída com sucesso",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir a tarefa",
+        variant: "destructive",
+      });
+    },
+  });
+
   return {
     createTask,
     updateTask,
+    deleteTask,
   };
 }

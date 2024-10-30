@@ -1,51 +1,25 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import TaskCard from "@/components/TaskCard";
+import { TaskList } from "@/components/TaskList";
 import EmployeeCard from "@/components/EmployeeCard";
 import AudioRecorder from "@/components/AudioRecorder";
 import FileUpload from "@/components/FileUpload";
 import StatsCard from "@/components/StatsCard";
 import TaskAnalytics from "@/components/TaskAnalytics";
-import { Users, ListTodo, Upload, TrendingUp, Activity, CheckCircle, ChartLine } from "lucide-react";
+import { ListTodo, Users, Upload, ChartLine } from "lucide-react";
 import { motion } from "framer-motion";
-
-const tasks = [
-  {
-    title: "Desenvolver nova feature",
-    description: "Implementar sistema de notificações push",
-    dueDate: "2024-03-20",
-    priority: "high",
-    assignee: "João Silva",
-  },
-  {
-    title: "Revisar documentação",
-    description: "Atualizar documentação da API",
-    dueDate: "2024-03-22",
-    priority: "medium",
-    assignee: "Maria Santos",
-  },
-] as const;
-
-const employees = [
-  {
-    name: "João Silva",
-    role: "Desenvolvedor Frontend",
-    status: "online",
-    avatar: "/avatars/joao.jpg",
-    taskCount: 3,
-  },
-  {
-    name: "Maria Santos",
-    role: "UX Designer",
-    status: "busy",
-    avatar: "/avatars/maria.jpg",
-    taskCount: 2,
-  },
-] as const;
+import { TaskDialog } from "@/components/TaskDialog";
+import { useTaskDialog } from "@/hooks/useTaskDialog";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 const Index = () => {
+  const { isOpen, task, closeDialog } = useTaskDialog();
+  const { data: tasks = [] } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: api.tasks.list,
+  });
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -145,18 +119,7 @@ const Index = () => {
           </ScrollArea>
 
           <TabsContent value="tasks">
-            <motion.div 
-              className="grid gap-4"
-              variants={container}
-              initial="hidden"
-              animate="show"
-            >
-              {tasks.map((task, index) => (
-                <motion.div key={index} variants={item}>
-                  <TaskCard {...task} />
-                </motion.div>
-              ))}
-            </motion.div>
+            <TaskList tasks={tasks} />
           </TabsContent>
 
           <TabsContent value="team">
@@ -198,6 +161,12 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <TaskDialog 
+        open={isOpen} 
+        onOpenChange={closeDialog}
+        task={task}
+      />
     </div>
   );
 };
