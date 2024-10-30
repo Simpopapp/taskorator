@@ -21,9 +21,9 @@ const TaskCard = ({ title, description, dueDate, priority, assignee }: TaskCardP
   const { toast } = useToast();
 
   const priorityColors = {
-    high: "bg-error text-white",
-    medium: "bg-warning text-gray-900",
-    low: "bg-success text-white",
+    high: "bg-destructive text-destructive-foreground",
+    medium: "bg-yellow-500 text-white",
+    low: "bg-green-500 text-white",
   };
 
   const handleComplete = async () => {
@@ -31,15 +31,10 @@ const TaskCard = ({ title, description, dueDate, priority, assignee }: TaskCardP
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsCompleted(true);
-      
-      // Efeito sonoro de conclusão
-      const audio = new Audio("/complete.mp3");
-      audio.play();
-      
       toast({
         title: "Tarefa concluída",
         description: "Status atualizado com sucesso",
-        className: "animate-slide-up",
+        className: "glass-card",
       });
     } catch (error) {
       toast({
@@ -62,7 +57,7 @@ const TaskCard = ({ title, description, dueDate, priority, assignee }: TaskCardP
     >
       <Card 
         className={`
-          w-full card-hover cursor-pointer
+          glass-card hover-scale cursor-pointer
           ${isCompleted ? 'opacity-75' : ''}
           ${isExpanded ? 'ring-2 ring-primary' : ''}
         `}
@@ -79,7 +74,7 @@ const TaskCard = ({ title, description, dueDate, priority, assignee }: TaskCardP
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
                   >
-                    <CheckCircle className="w-5 h-5 text-success" />
+                    <CheckCircle className="w-5 h-5 text-green-500" />
                   </motion.div>
                 )}
                 {!isCompleted && isOverdue && (
@@ -88,12 +83,12 @@ const TaskCard = ({ title, description, dueDate, priority, assignee }: TaskCardP
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
                   >
-                    <AlertCircle className="w-5 h-5 text-error" />
+                    <AlertCircle className="w-5 h-5 text-destructive" />
                   </motion.div>
                 )}
               </AnimatePresence>
             </CardTitle>
-            <Badge className={priorityColors[priority]}>{priority}</Badge>
+            <Badge className={`${priorityColors[priority]} capitalize`}>{priority}</Badge>
           </div>
         </CardHeader>
         
@@ -106,11 +101,11 @@ const TaskCard = ({ title, description, dueDate, priority, assignee }: TaskCardP
               transition={{ duration: 0.2 }}
             >
               <CardContent>
-                <p className="text-gray-600 mb-4">{description}</p>
-                <div className="flex gap-4 text-sm text-gray-500">
+                <p className="text-muted-foreground mb-4">{description}</p>
+                <div className="flex gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <CalendarIcon className="w-4 h-4" />
-                    <span className={isOverdue ? "text-error" : ""}>{dueDate}</span>
+                    <span className={isOverdue ? "text-destructive" : ""}>{dueDate}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <UserIcon className="w-4 h-4" />
@@ -125,7 +120,7 @@ const TaskCard = ({ title, description, dueDate, priority, assignee }: TaskCardP
         <CardFooter className="p-4">
           <Button
             variant={isCompleted ? "outline" : "default"}
-            className="w-full button-hover"
+            className="w-full hover-scale"
             onClick={(e) => {
               e.stopPropagation();
               handleComplete();
