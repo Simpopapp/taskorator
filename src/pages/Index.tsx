@@ -6,7 +6,8 @@ import EmployeeCard from "@/components/EmployeeCard";
 import AudioRecorder from "@/components/AudioRecorder";
 import FileUpload from "@/components/FileUpload";
 import StatsCard from "@/components/StatsCard";
-import { Users, ListTodo, Upload, TrendingUp, Activity, CheckCircle } from "lucide-react";
+import TaskAnalytics from "@/components/TaskAnalytics";
+import { Users, ListTodo, Upload, TrendingUp, Activity, CheckCircle, ChartLineUp } from "lucide-react";
 import { motion } from "framer-motion";
 
 const tasks = [
@@ -133,6 +134,10 @@ const Index = () => {
               <Upload className="h-4 w-4 mr-2" />
               Upload
             </TabsTrigger>
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <ChartLineUp className="h-4 w-4 mr-2" />
+              Análise
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="tasks">
@@ -182,6 +187,10 @@ const Index = () => {
                 <FileUpload />
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <TaskAnalytics />
           </TabsContent>
         </Tabs>
       </div>
