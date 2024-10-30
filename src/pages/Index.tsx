@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import TaskCard from "@/components/TaskCard";
 import EmployeeCard from "@/components/EmployeeCard";
 import AudioRecorder from "@/components/AudioRecorder";
@@ -121,24 +122,27 @@ const Index = () => {
         </motion.div>
 
         <Tabs defaultValue="tasks" className="space-y-6">
-          <TabsList className="w-full justify-start space-x-2 rounded-lg glass-card p-1">
-            <TabsTrigger value="tasks" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <ListTodo className="h-4 w-4 mr-2" />
-              Tarefas
-            </TabsTrigger>
-            <TabsTrigger value="team" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Users className="h-4 w-4 mr-2" />
-              Equipe
-            </TabsTrigger>
-            <TabsTrigger value="upload" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Upload className="h-4 w-4 mr-2" />
-              Upload
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <ChartLine className="h-4 w-4 mr-2" />
-              Análise
-            </TabsTrigger>
-          </TabsList>
+          <ScrollArea className="w-full whitespace-nowrap">
+            <TabsList className="w-full justify-start space-x-2 rounded-lg glass-card p-1 inline-flex">
+              <TabsTrigger value="tasks" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <ListTodo className="h-4 w-4 mr-2" />
+                Tarefas
+              </TabsTrigger>
+              <TabsTrigger value="team" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Users className="h-4 w-4 mr-2" />
+                Equipe
+              </TabsTrigger>
+              <TabsTrigger value="upload" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <Upload className="h-4 w-4 mr-2" />
+                Upload
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <ChartLine className="h-4 w-4 mr-2" />
+                Análise
+              </TabsTrigger>
+            </TabsList>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
 
           <TabsContent value="tasks">
             <motion.div 
