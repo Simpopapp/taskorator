@@ -1,85 +1,110 @@
 import { Task, Employee, AudioTranscription, TaskAnalysis } from "./api-types";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
-
-async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
-  const token = localStorage.getItem("auth_token");
-  
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      ...options.headers,
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
+// Dados mockados para demonstração
+const mockTasks: Task[] = [
+  {
+    id: "1",
+    title: "Desenvolver nova feature",
+    description: "Implementar sistema de notificações",
+    dueDate: "2024-03-20",
+    priority: "high",
+    assignee: "João Silva",
+    status: "pending",
+    createdAt: "2024-03-01",
+    updatedAt: "2024-03-01"
+  },
+  {
+    id: "2",
+    title: "Revisar pull request",
+    description: "Revisar código da feature de autenticação",
+    dueDate: "2024-03-15",
+    priority: "medium",
+    assignee: "Maria Santos",
+    status: "completed",
+    createdAt: "2024-03-01",
+    updatedAt: "2024-03-10"
   }
+];
 
-  return response.json();
-}
+// Simula delay de rede
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const api = {
   tasks: {
-    list: () => fetchWithAuth("/tasks"),
-    create: (task: Partial<Task>) => fetchWithAuth("/tasks", {
-      method: "POST",
-      body: JSON.stringify(task),
-    }),
-    update: (id: string, task: Partial<Task>) => fetchWithAuth(`/tasks/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(task),
-    }),
-    delete: (id: string) => fetchWithAuth(`/tasks/${id}`, {
-      method: "DELETE",
-    }),
+    list: async () => {
+      await delay(500); // Simula delay de rede
+      return mockTasks;
+    },
+    create: async (task: Partial<Task>) => {
+      await delay(500);
+      const newTask: Task = {
+        id: Math.random().toString(36).substr(2, 9),
+        title: task.title || "",
+        description: task.description || "",
+        dueDate: task.dueDate || new Date().toISOString(),
+        priority: task.priority || "medium",
+        assignee: task.assignee || "",
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      mockTasks.push(newTask);
+      return newTask;
+    },
+    update: async (id: string, task: Partial<Task>) => {
+      await delay(500);
+      const index = mockTasks.findIndex(t => t.id === id);
+      if (index === -1) throw new Error("Task not found");
+      
+      mockTasks[index] = {
+        ...mockTasks[index],
+        ...task,
+        updatedAt: new Date().toISOString()
+      };
+      return mockTasks[index];
+    },
+    delete: async (id: string) => {
+      await delay(500);
+      const index = mockTasks.findIndex(t => t.id === id);
+      if (index === -1) throw new Error("Task not found");
+      mockTasks.splice(index, 1);
+    }
   },
   employees: {
-    list: () => fetchWithAuth("/employees"),
-    update: (id: string, status: Employee["status"]) => fetchWithAuth(`/employees/${id}/status`, {
-      method: "PATCH",
-      body: JSON.stringify({ status }),
-    }),
+    list: async () => {
+      await delay(500);
+      return [];
+    },
+    update: async (id: string, status: Employee["status"]) => {
+      await delay(500);
+      return { success: true };
+    }
   },
   audio: {
     transcribe: async (audioBlob: Blob): Promise<AudioTranscription> => {
-      const formData = new FormData();
-      formData.append("audio", audioBlob);
-      
-      const response = await fetch(`${API_URL}/audio/transcribe`, {
-        method: "POST",
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error("Falha ao transcrever áudio");
-      }
-      
-      return response.json();
+      await delay(1000);
+      return {
+        text: "Exemplo de transcrição de áudio",
+        confidence: 0.95,
+        metadata: {
+          duration: 60,
+          wordCount: 100
+        }
+      };
     },
-    analyze: (text: string): Promise<TaskAnalysis> => 
-      fetchWithAuth("/audio/analyze", {
-        method: "POST",
-        body: JSON.stringify({ text }),
-      }),
+    analyze: async (text: string): Promise<TaskAnalysis> => {
+      await delay(1000);
+      return {
+        type: "task",
+        priority: "medium",
+        confidence: 0.8
+      };
+    }
   },
   files: {
     upload: async (file: File) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      
-      const response = await fetch(`${API_URL}/files/upload`, {
-        method: "POST",
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error("Falha ao enviar arquivo");
-      }
-      
-      return response.json();
-    },
-  },
+      await delay(1000);
+      return { url: "https://exemplo.com/arquivo.pdf" };
+    }
+  }
 };
