@@ -21,19 +21,7 @@ export interface Employee {
   email: string;
 }
 
-export interface AudioTranscription {
-  text: string;
-  confidence: number;
-  metadata: {
-    duration: number;
-    wordCount: number;
-  }
-}
-
-export interface TaskAnalysis {
-  type: "task";
-  priority: Task["priority"];
-  dueDate?: string;
-  assignee?: string;
-  confidence: number;
+export interface UserProfile {
+  id: string;
+  role: "leader" | "member";
 }

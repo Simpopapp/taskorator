@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Task, Employee, AudioTranscription, TaskAnalysis } from './api-types';
+import { Task, Employee } from './api-types';
 
 export const api = {
   tasks: {
@@ -31,6 +31,7 @@ export const api = {
         .single();
 
       if (!user) throw new Error('Usuário não autenticado');
+      if (userProfile?.role !== 'leader') throw new Error('Apenas líderes podem criar tarefas');
 
       const { data, error } = await supabase
         .from('tasks')
@@ -66,9 +67,7 @@ export const api = {
 
       if (!taskData) throw new Error('Tarefa não encontrada');
 
-      // Apenas líderes ou o próprio assignee podem atualizar a tarefa
-      if (userProfile?.role !== 'leader' && 
-          taskData.assignee !== user.email) {
+      if (userProfile?.role !== 'leader' && taskData.assignee !== user.email) {
         throw new Error('Sem permissão para atualizar esta tarefa');
       }
 
@@ -104,9 +103,7 @@ export const api = {
 
       if (!taskData) throw new Error('Tarefa não encontrada');
 
-      // Apenas líderes ou o criador podem deletar a tarefa
-      if (userProfile?.role !== 'leader' && 
-          taskData.created_by !== user.email) {
+      if (userProfile?.role !== 'leader' && taskData.created_by !== user.email) {
         throw new Error('Sem permissão para deletar esta tarefa');
       }
 
@@ -116,55 +113,6 @@ export const api = {
         .eq('id', id);
       
       if (error) throw error;
-    }
-  },
-  employees: {
-    list: async () => {
-      const { data, error } = await supabase
-        .from('employees')
-        .select('*');
-      
-      if (error) throw error;
-      return data as Employee[];
-    },
-    update: async (id: string, status: Employee['status']) => {
-      const { error } = await supabase
-        .from('employees')
-        .update({ status })
-        .eq('id', id);
-      
-      if (error) throw error;
-      return { success: true };
-    }
-  },
-  audio: {
-    transcribe: async (audioBlob: Blob): Promise<AudioTranscription> => {
-      const { data, error } = await supabase
-        .from('audio_transcriptions')
-        .insert([{ audio: audioBlob }])
-        .select()
-        .single();
-
-      if (error) throw error;
-      return {
-        text: data.text,
-        confidence: data.confidence,
-        metadata: {
-          duration: data.metadata.duration,
-          wordCount: data.metadata.word_count
-        }
-      };
-    },
-  },
-  files: {
-    upload: async (file: File) => {
-      const { data, error } = await supabase
-        .storage
-        .from('uploads')
-        .upload(file.name, file);
-
-      if (error) throw error;
-      return { url: `https://your-supabase-url.storage.supabase.co/${data.path}` };
     }
   }
 };
