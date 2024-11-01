@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Task, Employee } from './api-types';
+import { Task } from './api-types';
 
 export const api = {
   tasks: {
