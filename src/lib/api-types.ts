@@ -8,12 +8,13 @@ export interface Task {
   status: "pending" | "completed";
   createdAt: string;
   updatedAt: string;
+  createdBy: string;
 }
 
 export interface Employee {
   id: string;
   name: string;
-  role: string;
+  role: "leader" | "member";
   status: "online" | "busy" | "offline";
   avatar: string;
   taskCount: number;
