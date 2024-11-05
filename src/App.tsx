@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import { AuthForm } from "./components/AuthForm";
 import { useAuth } from "./hooks/useAuth";
-import RegisterAsGuest from "./components/RegisterAsGuest"; // Importe o componente aqui
+import RegisterAsGuest from "./components/RegisterAsGuest";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,7 +40,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<AuthForm />} />
-          <Route path="/register-guest" element={<RegisterAsGuest />} /> {/* Adicione a rota para o registro de convidados */}
+          <Route path="/register-guest" element={<RegisterAsGuest />} />
           <Route
             path="/"
             element={
