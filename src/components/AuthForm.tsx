@@ -4,10 +4,9 @@ import { Input } from './ui/input';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from './ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
-import { Mail, Lock, UserPlus, LogIn, Eye, EyeOff, User, Info } from 'lucide-react';
-import { Progress } from './ui/progress';
-import { Tooltip } from './ui/tooltip';
+import { Mail, Lock, UserPlus, LogIn, Eye, EyeOff, User } from 'lucide-react';
 import { useToast } from './ui/use-toast';
+import { Link } from 'react-router-dom';
 
 export function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -20,23 +19,6 @@ export function AuthForm() {
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
 
-  const calculatePasswordStrength = (pass: string) => {
-    let strength = 0;
-    if (pass.length >= 8) strength += 25;
-    if (pass.match(/[A-Z]/)) strength += 25;
-    if (pass.match(/[0-9]/)) strength += 25;
-    if (pass.match(/[^A-Za-z0-9]/)) strength += 25;
-    return strength;
-  };
-
-  const passwordStrength = calculatePasswordStrength(password);
-  const getStrengthColor = () => {
-    if (passwordStrength <= 25) return 'bg-red-500';
-    if (passwordStrength <= 50) return 'bg-orange-500';
-    if (passwordStrength <= 75) return 'bg-yellow-500';
-    return 'bg-green-500';
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -44,15 +26,6 @@ export function AuthForm() {
       toast({
         title: "Erro de validação",
         description: "As senhas não coincidem",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!isLogin && passwordStrength < 75) {
-      toast({
-        title: "Senha fraca",
-        description: "Por favor, use uma senha mais forte",
         variant: "destructive",
       });
       return;
@@ -142,38 +115,25 @@ export function AuthForm() {
                   </button>
                 </div>
                 {!isLogin && (
-                  <>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <Progress value={passwordStrength} className={`h-2 ${getStrengthColor()}`} />
-                        <Tooltip>
-                          <Info className="h-4 w-4 text-gray-400 ml-2" />
-                          <span className="text-xs text-gray-400">
-                            A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, um número e um caractere especial
-                          </span>
-                        </Tooltip>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirme sua senha"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="pl-9 pr-9 bg-white/5 border-white/10 text-white placeholder:text-gray-400"
-                        required={!isLogin}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-3 text-gray-400 hover:text-white"
-                      >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirme sua senha"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="pl-9 pr-9 bg-white/5 border-white/10 text-white placeholder:text-gray-400"
+                      required={!isLogin}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-3 text-gray-400 hover:text-white"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 )}
               </div>
             </CardContent>
@@ -194,6 +154,12 @@ export function AuthForm() {
               >
                 {isLogin ? 'Criar uma conta' : 'Já tenho uma conta'}
               </Button>
+              <Link 
+                to="/register-guest" 
+                className="text-sm text-center text-gray-300 hover:text-white"
+              >
+                Cadastrar como convidado
+              </Link>
             </CardFooter>
           </form>
         </Card>
