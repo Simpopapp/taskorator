@@ -32,14 +32,16 @@ const RegisterAsGuest: React.FC = () => {
     }
 
     try {
-      const email = `guest_${username}@guest.com`;
+      // Using a more generic email format that's likely to be allowed
+      const email = `${username.toLowerCase()}@temporary-mail.net`;
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             username,
-            role: 'guest'
+            role: 'guest',
+            is_guest: true
           }
         }
       });
